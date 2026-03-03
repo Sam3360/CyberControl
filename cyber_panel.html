@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CYBER CONTROL PANEL</title>
+
+<script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.3/dist/dotlottie-wc.js" type="module"></script>
+
+<style>
+:root{
+    --bg: radial-gradient(circle at top,#0f2027,#0b0f14);
+    --accent:#00ffcc;
+}
+
+*{box-sizing:border-box;}
+
+body{
+    margin:0;
+    font-family:Segoe UI,sans-serif;
+    background:var(--bg);
+    color:#00f7ff;
+}
+
+/* TERMINAL */
+#terminalBoot{
+    position:fixed;
+    inset:0;
+    background:#000;
+    color:#00ff88;
+    font-family:monospace;
+    padding:40px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    z-index:10000;
+}
+
+.boot-line{
+    margin:5px 0;
+    opacity:0;
+    animation:fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn{
+    to{opacity:1;}
+}
+
+/* LOTTIE */
+#lottieScreen{
+    position:fixed;
+    inset:0;
+    background:var(--bg);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+    opacity:0;
+    transition:opacity 0.6s ease;
+    pointer-events:none;
+}
+
+/* HEADER */
+header{
+    padding:20px 40px;
+    font-size:clamp(18px,2vw,26px);
+    letter-spacing:2px;
+    border-bottom:1px solid #00ffcc33;
+}
+
+/* GRID */
+.container{
+    padding:40px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:30px;
+}
+
+.card{
+    background:rgba(0,20,30,0.7);
+    border:1px solid #00ffcc33;
+    border-radius:16px;
+    padding:25px;
+    box-shadow:0 0 20px #00ffcc22;
+    line-height:1.7;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 0 30px #00ffcc44;
+}
+
+h3{
+    margin-top:0;
+    margin-bottom:15px;
+    color:var(--accent);
+}
+
+/* PASSWORD TOOL */
+.passwordBox input{
+    width:100%;
+    padding:10px;
+    background:#0b0f14;
+    border:1px solid #00ffcc55;
+    border-radius:8px;
+    color:#00ffcc;
+    margin-bottom:10px;
+}
+
+.strengthBar{
+    height:12px;
+    background:#002b30;
+    border-radius:8px;
+    overflow:hidden;
+}
+
+.strengthFill{
+    height:100%;
+    width:0%;
+    transition:0.3s;
+}
+
+/* FOOTER */
+.footer{
+    text-align:center;
+    padding:20px;
+    font-size:12px;
+    color:#666;
+}
+</style>
+</head>
+<body>
+
+<div id="terminalBoot"></div>
+
+<div id="lottieScreen">
+<dotlottie-wc
+    src="https://lottie.host/a58ae531-7e4d-4751-95b1-885e9163e14e/u0GkZtotNu.lottie"
+    style="width:clamp(240px,40vw,420px);height:auto;"
+    autoplay>
+</dotlottie-wc>
+</div>
+
+<header>CYBER CONTROL PANEL</header>
+
+<div class="container">
+
+<div class="card"><h3>System Info</h3><p id="systemInfo"></p></div>
+
+<div class="card"><h3>Network Info</h3><p id="networkInfo"></p></div>
+
+<div class="card"><h3>Display</h3><p id="displayInfo"></p></div>
+
+<div class="card"><h3>Advanced</h3><p id="advancedInfo"></p></div>
+
+<div class="card passwordBox">
+<h3>Password Strength Analyzer</h3>
+<input type="password" id="passwordInput" placeholder="Enter password">
+<div class="strengthBar"><div class="strengthFill" id="strengthFill"></div></div>
+<p id="strengthText"></p>
+<p id="crackTime"></p>
+</div>
+
+<div class="card">
+<h3>Performance</h3>
+<p id="performanceInfo"></p>
+</div>
+
+<div class="card">
+<h3>Status</h3>
+<p id="statusInfo"></p>
+</div>
+
+</div>
+
+<div class="footer">Real browser-backed diagnostics.</div>
+
+<script>
+
+/* TERMINAL BOOT */
+const lines=[
+"Initializing environment...",
+"Verifying browser engine...",
+"Loading security modules...",
+"Preparing diagnostics...",
+"Boot sequence complete."
+];
+
+const terminal=document.getElementById("terminalBoot");
+
+lines.forEach((line,i)=>{
+    const div=document.createElement("div");
+    div.className="boot-line";
+    div.textContent="> "+line;
+    div.style.animationDelay=(i*0.7)+"s";
+    terminal.appendChild(div);
+});
+
+setTimeout(()=>{
+    terminal.style.display="none";
+    const lottie=document.getElementById("lottieScreen");
+    lottie.style.opacity="1";
+    lottie.style.pointerEvents="all";
+
+    setTimeout(()=>{
+        lottie.style.opacity="0";
+        setTimeout(()=>{
+            lottie.style.display="none";
+        },600);
+    },5100);
+
+}, lines.length*700 + 1000);
+
+/* SYSTEM INFO */
+document.getElementById("systemInfo").innerHTML=`
+Browser: ${navigator.userAgent}<br>
+Platform: ${navigator.platform}<br>
+CPU Cores: ${navigator.hardwareConcurrency||"N/A"}<br>
+Memory: ${navigator.deviceMemory?navigator.deviceMemory+" GB":"N/A"}
+`;
+
+/* NETWORK */
+if(navigator.connection){
+document.getElementById("networkInfo").innerHTML=`
+Type: ${navigator.connection.effectiveType}<br>
+Downlink: ${navigator.connection.downlink} Mbps<br>
+RTT: ${navigator.connection.rtt} ms
+`;
+}else{
+document.getElementById("networkInfo").innerHTML="Network API not supported.";
+}
+
+/* DISPLAY */
+document.getElementById("displayInfo").innerHTML=`
+Resolution: ${screen.width}x${screen.height}<br>
+Available: ${screen.availWidth}x${screen.availHeight}<br>
+Pixel Ratio: ${devicePixelRatio}<br>
+Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}
+`;
+
+/* ADVANCED */
+async function loadAdvanced(){
+let battery="Not supported";
+if(navigator.getBattery){
+const b=await navigator.getBattery();
+battery=`${(b.level*100).toFixed(0)}% | Charging: ${b.charging}`;
+}
+document.getElementById("advancedInfo").innerHTML=`
+Battery: ${battery}<br>
+Dark Mode: ${matchMedia("(prefers-color-scheme:dark)").matches}<br>
+Touch Support: ${'ontouchstart' in window}<br>
+Clipboard API: ${navigator.clipboard?"Supported":"Not Supported"}
+`;
+}
+loadAdvanced();
+
+/* PASSWORD CHECK */
+const input=document.getElementById("passwordInput");
+const fill=document.getElementById("strengthFill");
+const text=document.getElementById("strengthText");
+const crack=document.getElementById("crackTime");
+
+input.addEventListener("input",()=>{
+let val=input.value;
+let score=0;
+if(val.length>6)score++;
+if(val.length>10)score++;
+if(/[A-Z]/.test(val))score++;
+if(/[0-9]/.test(val))score++;
+if(/[^A-Za-z0-9]/.test(val))score++;
+
+let percent=(score/5)*100;
+fill.style.width=percent+"%";
+
+if(percent<=20){
+fill.style.background="red";
+text.textContent="Very Weak";
+crack.textContent="Crack Time: Seconds";
+}
+else if(percent<=40){
+fill.style.background="orange";
+text.textContent="Weak";
+crack.textContent="Crack Time: Minutes";
+}
+else if(percent<=60){
+fill.style.background="yellow";
+text.textContent="Moderate";
+crack.textContent="Crack Time: Hours";
+}
+else if(percent<=80){
+fill.style.background="cyan";
+text.textContent="Strong";
+crack.textContent="Crack Time: Years";
+}
+else{
+fill.style.background="lime";
+text.textContent="Very Strong";
+crack.textContent="Crack Time: Centuries+";
+}
+});
+
+/* PERFORMANCE */
+document.getElementById("performanceInfo").innerHTML=`
+Page Load Time: ${(performance.now()/1000).toFixed(2)}s<br>
+JS Heap Size: ${performance.memory?Math.round(performance.memory.usedJSHeapSize/1048576)+" MB":"Not supported"}
+`;
+
+/* ONLINE STATUS */
+function updateStatus(){
+document.getElementById("statusInfo").innerHTML=`
+Online: ${navigator.onLine}<br>
+Cookies Enabled: ${navigator.cookieEnabled}
+`;
+}
+updateStatus();
+window.addEventListener("online",updateStatus);
+window.addEventListener("offline",updateStatus);
+
+/* CLOCK */
+setInterval(()=>{
+document.querySelector(".footer").textContent=
+"Real browser-backed diagnostics | "+new Date().toLocaleString();
+},1000);
+
+</script>
+</body>
+</html>
